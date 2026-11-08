@@ -1,0 +1,8 @@
+{
+  "name": "kuku-master-check",
+  "version": "1.4.0",
+  "private": true,
+  "type": "module",
+  "scripts": {"test": "node --test tests/*.test.mjs"},
+  "description": "小学2年生向け九九の学習・習得度確認アプリ"
+}

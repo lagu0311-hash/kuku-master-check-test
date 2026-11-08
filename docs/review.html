@@ -1,0 +1,60 @@
+<!doctype html>
+<html lang="ja"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>九九マスターチェック｜ご褒美確認ページ</title>
+<style>
+  *{box-sizing:border-box}body{font:16px/1.6 system-ui,-apple-system,sans-serif;margin:0;background:#f4f9fc;color:#27384b}
+  main{max-width:900px;margin:0 auto;padding:18px 16px 52px}h1{font-size:clamp(1.4rem,5vw,1.9rem);margin:5px 0 12px}h2{font-size:1.1rem;margin:0 0 8px}
+  .label{display:inline-block;background:#e0efff;border-radius:25px;padding:3px 10px;font-weight:700;font-size:.85rem;color:#24548a}
+  .info{border:1px solid #b9d6e9;background:#eaf5ff;padding:13px 15px;border-radius:12px;margin:12px 0 18px}
+  .groups{display:grid;gap:14px}section{background:white;border:1px solid #e2e9ed;border-radius:17px;padding:15px}
+  .buttons{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:8px}
+  button,.link{display:inline-flex;align-items:center;justify-content:center;min-height:48px;border:1px solid #b6cbd9;border-radius:12px;padding:8px 10px;background:#eef7fe;font:700 15px/1.3 inherit;color:#163d68;cursor:pointer;text-align:center}
+  button{font:700 15px/1.3 system-ui,-apple-system,sans-serif}button:focus-visible,.link:focus-visible{outline:3px solid #2c70dd;outline-offset:2px}
+  button:hover{background:#deeffe}.button-last{background:#e3f5e5;border-color:#acd6b7;color:#28563e}
+  .effects{display:flex;gap:10px;flex-wrap:wrap;margin:12px 0 20px}.effects label{display:flex;align-items:center;gap:5px;background:#fff;padding:8px 13px;border:1px solid #d6e1e7;border-radius:12px}
+  .links{display:flex;flex-wrap:wrap;gap:10px;margin:20px 0}.link{text-decoration:none;background:white}
+  .foot{font-size:.85rem;color:#536274}summary{cursor:pointer}code{word-break:break-all}
+  @media(min-width:700px){.groups{grid-template-columns:repeat(2,minmax(0,1fr))}}
+</style></head><body><main>
+  <span class="label">開発確認用・人工データ</span>
+  <h1>ご褒美イラスト 実機確認</h1>
+  <p>作品と開放段階をタップすると、実際のv1.4開発版のご褒美画面を表示します。iPhoneとAndroid Chromeの両方で確認できます。</p>
+  <div class="info"><strong>保存データの保護</strong>：この確認用サイトでは専用の保存キーを使います。公開版v1.3の記録を読み込んだり消去したりしません。選んだ状態は確認サイト内の人工データに置き換わります。</div>
+  <h2>アニメーション設定</h2>
+  <div class="effects" role="group" aria-label="アニメーション設定">
+   <label><input type="radio" name="effects" value="normal" checked> ふつう</label>
+   <label><input type="radio" name="effects" value="low"> ひかえめ</label>
+   <label><input type="radio" name="effects" value="off"> オフ</label>
+  </div>
+  <div id="groups" class="groups"></div>
+  <div class="links"><button id="reset" type="button">開放0マス（初期状態）</button><a class="link" href="./index.html">九九アプリ本体を開く</a></div>
+  <details><summary>検証方法と注意事項</summary><p>まず各作品の1〜4マスを確認してください。4マス完成時だけ完成画像とアニメーションが表示されます。アニメーションを「オフ」にすると動きを抑制します。画面幅、スクロール、画像の欠け、ページ遷移も確認してください。</p><p>本サイトは開発検証専用です。テストデータは実際の学習履歴ではありません。実機確認と公開承認が得られるまで本番v1.3は維持します。</p></details>
+  <p class="foot">GitHub Pagesで公開する場合、この確認ページと原画は一般公開されます。患者・児童などの実データは追加しないでください。</p>
+</main>
+<script type="module">
+ import {previewFixtures} from './review-fixtures.js';
+ import {validateStore} from './core.js';
+ const storageKey='kuku-master-check-preview:v4';
+ const series=[['01_flower','花畑の子猫'],['02_starry','星空と子猫'],['03_picnic','ピクニック'],['04_balloon','青い風船の子猫']];
+ const group=document.querySelector('#groups');
+ function load(key){
+  const raw=previewFixtures[key];
+  if(!raw){alert('テストデータが見つかりません');return}
+  const copy=structuredClone(raw);
+  copy.settings.effects=document.querySelector('input[name=effects]:checked').value;
+  try{validateStore(copy);localStorage.setItem(storageKey,JSON.stringify(copy))}
+  catch(e){alert('テストデータの保存に失敗しました。ブラウザの設定をご確認ください。');return}
+  location.assign('./index.html?preview=reward');
+ }
+ for(const [prefix,label] of series){
+   const section=document.createElement('section');const h=document.createElement('h2');h.textContent=label;section.append(h);
+   const buttons=document.createElement('div');buttons.className='buttons';
+   for(let n=1;n<=4;n++){
+    const b=document.createElement('button');b.type='button';b.textContent=n+' / 4';b.setAttribute('aria-label',`${label}、${n}マス開放`);
+    if(n===4)b.className='button-last';
+    b.addEventListener('click',()=>load(`${prefix}_${n}of4`));buttons.append(b);
+   }
+   section.append(buttons);group.append(section);
+ }
+ document.querySelector('#reset').addEventListener('click',()=>load('00_unopened'));
+</script></body></html>

@@ -2,6 +2,7 @@ import { BANK, newStore, validateStore, buildQuestions, masteryOf, masteryCounts
 import { animalSvg } from './animals.js';
 
 const STORAGE_KEY = 'kuku-master-check-preview:v4';
+const PREVIEW_REWARD_FOCUS_KEY = `${STORAGE_KEY}:focusRewardIndex`;
 const OLD_STORAGE_KEYS = []; // Preview must never delete production records.
 const $app = document.querySelector('#app');
 const names = { stage:'段ごと',mixed:'まぜこぜ',full:'全部',weak:'苦手克服',practice:'練習',challenge:'力試し' };
@@ -294,10 +295,16 @@ function renderResult() {
 function renderReward() {
   const idx=currentRewardIndex(store.reward);
   const count=totalRewardTiles(store.reward);
+  const previewMode=new URLSearchParams(location.search).get('preview')==='reward';
+  const focusRaw=previewMode?localStorage.getItem(PREVIEW_REWARD_FOCUS_KEY):null;
+  const focusIndex=focusRaw===null?null:Number(focusRaw);
+  const panelIndex=Number.isInteger(focusIndex) && focusIndex>=0 && focusIndex<store.reward.pictures.length && store.reward.pictures[focusIndex]?.unlocked===4
+    ? focusIndex
+    : idx;
   shell(`${header('秘密のご褒美の絵','満点を取ると、絵が1マスずつ開くよ！')}
   <div class="panel centered"><h2>${count===16?'コンプリート！ 4枚全部完成！':`${count} / 16 マス 開いたよ！`}</h2>
   <p class="muted"><ruby>何<rt>なん</rt></ruby>の絵かは、完成してからのお楽しみ！</p></div>
-  ${idx>=0?rewardPanel(idx):'<div class="panel centered full-collection-banner"><h2>大成功！</h2><p>4枚全部集めたね！</p></div>'}
+  ${panelIndex>=0?rewardPanel(panelIndex):'<div class="panel centered full-collection-banner"><h2>大成功！</h2><p>4枚全部集めたね！</p></div>'}
   ${gallery()}
   ${secondary('home','← ホームへ')}`,false);
 }

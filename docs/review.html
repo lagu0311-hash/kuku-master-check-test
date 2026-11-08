@@ -42,7 +42,17 @@
   if(!raw){alert('テストデータが見つかりません');return}
   const copy=structuredClone(raw);
   copy.settings.effects=document.querySelector('input[name=effects]:checked').value;
-  try{validateStore(copy);localStorage.setItem(storageKey,JSON.stringify(copy))}
+  const focusMatch=/^(\d{2}_[a-z]+)_(\d)of4$/.exec(key);
+  try{
+    validateStore(copy);
+    localStorage.setItem(storageKey,JSON.stringify(copy));
+    if(focusMatch && focusMatch[2]==='4'){
+      const focusIndex=series.findIndex(([prefix])=>prefix===focusMatch[1]);
+      localStorage.setItem(`${storageKey}:focusRewardIndex`,String(focusIndex));
+    }else{
+      localStorage.removeItem(`${storageKey}:focusRewardIndex`);
+    }
+  }
   catch(e){alert('テストデータの保存に失敗しました。ブラウザの設定をご確認ください。');return}
   location.assign('./index.html?preview=reward');
  }

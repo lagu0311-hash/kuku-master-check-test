@@ -8,7 +8,7 @@ const app=readFileSync(resolve(dirname(fileURLToPath(import.meta.url)),'../docs/
 
 test('agreed kanji text and intentional hiragana exceptions',()=>{
   for(const phrase of ['今日も九九にチャレンジ！','自分のペースで、一歩ずつ。','頑張った記録を見る',
-    '詳しい記録と設定','答え合わせ','正解！　素敵だね！','次の問題 ▶'])
+    '詳しい記録と設定','答え合わせ','正解！　素敵だね！','次の問題 ▶','みんなでピクニック','タップで大きく見る'])
     assert.ok(app.includes(phrase),`Missing: ${phrase}`);
   assert.ok(app.includes('おうちのひと'));
   assert.ok(app.includes('よくできたね！'));

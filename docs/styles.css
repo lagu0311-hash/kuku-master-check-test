@@ -108,33 +108,42 @@ button rt{color:inherit}
 .reward-art-frame>img{display:block;width:100%;height:auto;aspect-ratio:1/1;object-fit:contain;transform:none;animation:none}
 .gallery-card .reward-gallery-art{width:min(100%,220px);aspect-ratio:1/1;border-radius:12px}
 .gallery-card .reward-gallery-art>img{width:100%;height:100%;border-radius:12px}
+
+.reward-zoom-btn{display:block;width:100%;padding:0;border:0;background:none;color:inherit;text-align:inherit}
+.reward-zoom-btn:hover .reward-gallery-art,.reward-zoom-btn:hover .reward-complete-art{transform:translateY(-1px)}
+.reward-zoom-btn .reward-gallery-art,.reward-zoom-btn .reward-complete-art{transition:transform .14s ease,box-shadow .14s ease}
+.reward-zoom-hint{display:block;margin-top:8px;font-size:12px;font-weight:700;color:#6a6f9e}
+body.reward-modal-open{overflow:hidden}
+.reward-modal-backdrop{position:fixed;inset:0;background:rgba(19,31,40,.58);z-index:40}
+.reward-modal{position:fixed;inset:0;z-index:41;display:grid;place-items:center;padding:18px}
+.reward-modal-card{width:min(96vw,1320px);max-height:calc(100vh - 32px);overflow:auto;background:#fffdf8;border:1px solid #e5dcc7;border-radius:24px;box-shadow:0 14px 36px rgba(29,42,52,.28);padding:14px}
+.reward-modal-header{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:4px 4px 12px}
+.reward-modal-header strong{font-size:clamp(19px,3.5vw,26px)}
+.reward-modal-close{border:1px solid #cfd7d2;background:#fff;border-radius:999px;min-width:42px;min-height:42px;font-size:24px;line-height:1;color:#35554a}
+.reward-modal-body .reward-complete-art{width:min(92vw,calc(100dvh - 145px),1254px);max-width:100%;margin:0 auto}
+.reward-modal-body .reward-complete-art img{width:100%;height:auto}
+.reward-modal-body .reward-art-frame{overflow:visible}
+@media(max-width:620px){.reward-modal{padding:10px}.reward-modal-card{padding:10px}.reward-modal-header{padding:2px 2px 10px}.reward-modal-close{min-width:40px;min-height:40px}}
+
 .reward-effect{position:absolute;z-index:1;pointer-events:none;opacity:0}
-.reward-effect.petal{width:10px;height:16px;background:rgba(255,227,239,.88);border:1px solid rgba(235,158,187,.40);border-radius:70% 10% 70% 10%;filter:drop-shadow(0 0 3px #fff8);animation:reward-petal-float 9s ease-in-out infinite}
-.theme-flower .petal.one{left:14%;top:8%}
-.theme-flower .petal.two{left:80%;top:12%;animation-delay:-4.2s;transform:scale(.65)}
-.theme-flower .sun-glint{left:72%;top:10%;width:21px;height:21px;border-radius:50%;background:radial-gradient(circle,#fff9d2 0%,#fff8ba60 32%,transparent 72%);animation:reward-shimmer 6.5s ease-in-out infinite}
-.theme-flower .butterfly{left:81%;top:31%;width:14px;height:12px;animation:reward-butterfly 7.8s ease-in-out infinite}
-.theme-flower .butterfly:before,.theme-flower .butterfly:after{content:'';position:absolute;top:1px;width:7px;height:9px;background:rgba(255,229,150,.78);border:1px solid rgba(181,136,77,.6);border-radius:90% 15% 90% 20%}
-.theme-flower .butterfly:before{left:0;transform:rotate(-25deg)}
-.theme-flower .butterfly:after{right:0;transform:scaleX(-1) rotate(-25deg)}
+.theme-flower .glimmer,.theme-picnic .glimmer,.theme-balloon .glimmer{width:18px;height:18px;border-radius:50%;background:radial-gradient(circle,#fff 0%,#fff8debf 24%,transparent 72%);filter:drop-shadow(0 0 5px #fff8d9);animation:reward-shimmer 7s ease-in-out infinite}
+.theme-flower .soft-light,.theme-picnic .soft-light,.theme-balloon .soft-light{border-radius:50%;background:radial-gradient(circle,#fffef18e 0%,transparent 68%);animation:reward-dapple 9s ease-in-out infinite}
+.theme-flower .glimmer.one{left:20%;top:21%}
+.theme-flower .glimmer.two{left:78%;top:25%;animation-delay:-3.4s}
+.theme-flower .soft-light.three{left:58%;top:10%;width:24%;height:24%}
 .theme-stars .twinkle{width:16px;height:16px;background:radial-gradient(circle,#fff 0 12%,#fff9ca 18%,transparent 68%);filter:drop-shadow(0 0 5px #fff3a9);animation:reward-shimmer 6s ease-in-out infinite}
 .theme-stars .twinkle.one{left:16%;top:18%}
 .theme-stars .twinkle.two{left:78%;top:38%;animation-delay:-2.7s;width:12px;height:12px}
 .theme-stars .shooting-star{left:64%;top:12%;width:51px;height:2px;border-radius:5px;background:linear-gradient(90deg,transparent,#fff9cf 70%,#fff);box-shadow:0 0 6px #fff9dc;transform:rotate(-33deg);animation:reward-shooting-star 11s ease-in-out infinite}
-.theme-picnic .sun-patch{border-radius:50%;background:radial-gradient(circle,#fffdd2a8 0%,#fff9ad44 42%,transparent 73%);filter:blur(3px);animation:reward-dapple 9s ease-in-out infinite}
-.theme-picnic .sun-patch.one{left:19%;top:4%;width:26%;height:18%}
-.theme-picnic .sun-patch.three{left:70%;top:8%;width:17%;height:13%;animation-delay:-3.6s}
-.theme-picnic .leaf{left:83%;top:5%;width:10px;height:16px;border:1px solid #568e5777;border-radius:90% 5% 90% 5%;background:#a6c87d9c;animation:reward-leaf-drift 8s ease-in-out infinite}
-.theme-balloon .glimmer{width:18px;height:18px;border-radius:50%;background:radial-gradient(circle,#fff 0%,#fffadbb8 21%,transparent 70%);filter:drop-shadow(0 0 5px #fffbd0);animation:reward-shimmer 7s ease-in-out infinite}
+.theme-picnic .glimmer.one{left:15%;top:17%}
+.theme-picnic .soft-light.two{left:46%;top:8%;width:26%;height:24%;animation-delay:-2.2s}
+.theme-picnic .glimmer.three{left:77%;top:21%;animation-delay:-4.4s}
 .theme-balloon .glimmer.one{left:18%;top:13%}
 .theme-balloon .glimmer.two{left:76%;top:24%;animation-delay:-3.3s}
-.theme-balloon .soft-light{left:54%;top:6%;width:24%;height:22%;border-radius:50%;background:radial-gradient(circle,#fffef581 0%,transparent 68%);animation:reward-dapple 9s ease-in-out infinite}
-@keyframes reward-petal-float{0%,100%{opacity:0;transform:translate(0,0) rotate(-18deg)}12%{opacity:.8}80%{opacity:.55}95%{opacity:0;transform:translate(16px,76px) rotate(90deg)}}
+.theme-balloon .soft-light.three{left:54%;top:6%;width:24%;height:22%}
 @keyframes reward-shimmer{0%,55%,100%{opacity:0;transform:scale(.7)}62%,76%{opacity:.9;transform:scale(1.1)}}
-@keyframes reward-butterfly{0%,100%{opacity:0;transform:translate(0,0) rotate(-10deg)}20%,76%{opacity:.76}95%{opacity:0;transform:translate(-14px,-10px) rotate(18deg)}}
 @keyframes reward-shooting-star{0%,71%,100%{opacity:0;transform:translate(0,0) rotate(-33deg)}75%{opacity:.8}84%{opacity:0;transform:translate(-35px,26px) rotate(-33deg)}}
 @keyframes reward-dapple{0%,100%{opacity:.12;transform:translate(0,0) scale(.9)}50%{opacity:.32;transform:translate(8px,3px) scale(1.08)}}
-@keyframes reward-leaf-drift{0%,100%{opacity:0;transform:translate(0,0) rotate(-32deg)}15%,75%{opacity:.63}95%{opacity:0;transform:translate(-27px,53px) rotate(135deg)}}
 /* Gentle: one slow detail per finished picture. Off / OS reduce: no overlays. */
 .reward-art-frame.low-motion .reward-effect:not(:nth-of-type(1)),
 .reward-art-frame.no-motion .reward-effect{display:none!important}

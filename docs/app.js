@@ -6,7 +6,7 @@ const OLD_STORAGE_KEYS = []; // Preview must never delete production records.
 const $app = document.querySelector('#app');
 const names = { stage:'段ごと',mixed:'まぜこぜ',full:'全部',weak:'苦手克服',practice:'練習',challenge:'力試し' };
 const masteryNames = { unseen:'まだ',practice:'練習中',learning:'おぼえてきた',mastered:'ばっちり！' };
-const state = { page:new URLSearchParams(location.search).get('preview')==='reward'?'reward':'home', mode:'practice', kind:'stage', stage:2, count:10, answer:'', paused:false, feedback:null, lastSessionId:null, selectedCell:null, notice:'',variant:null,lastAward:null,previousVariant:{},awardAnimation:false };
+const state = { page:new URLSearchParams(location.search).get('preview')==='reward'?'reward':'home', mode:'practice', kind:'stage', stage:2, count:10, answer:'', paused:false, feedback:null, lastSessionId:null, selectedCell:null, notice:'',variant:null,lastAward:null,previousVariant:{},awardAnimation:false,expandedRewardIndex:null };
 let store = newStore();
 let clockSince = null;
 let busy = false;
@@ -64,28 +64,43 @@ function animalScene(variant, kind='success') {
   return `<div class="animal-scene ${kind} ${store.settings.effects==='off'?'still':store.settings.effects==='low'?'gentle':''}">
     <span class="scene-spark left" aria-hidden="true">✦</span>${animalSvg(variant.type,variant.pose)}<span class="scene-spark right" aria-hidden="true">✧</span></div>`;
 }
-const pictureNames=['花畑の猫ちゃん','星空の猫ちゃん','ピクニック動物たち','青い風船の猫ちゃん'];
+const pictureNames=['花畑の猫ちゃん','星空の猫ちゃん','みんなでピクニック','青い風船の猫ちゃん'];
 // Approved JPEG artwork is displayed byte-for-byte. Animations are separate
 // DOM/CSS overlays and appear only after a picture is completely unlocked.
 function imagePath(index){return `./assets/${REWARD_PICTURES[index].image}`;}
 const rewardThemes=['flower','stars','picnic','balloon'];
 const rewardDecorations=[
-  ['petal one','petal two','sun-glint three','butterfly four'],
+  ['glimmer one','glimmer two','soft-light three'],
   ['twinkle one','twinkle two','shooting-star three'],
-  ['sun-patch one','leaf two','sun-patch three'],
+  ['glimmer one','soft-light two','glimmer three'],
   ['glimmer one','glimmer two','soft-light three']
 ];
 function rewardEffectMarkup(index) {
   if(store.settings.effects==='off') return '';
   return rewardDecorations[index].map(part=>`<span class="reward-effect ${part}" aria-hidden="true"></span>`).join('');
 }
-function rewardArt(index, galleryView=false){
+function rewardArt(index, galleryView=false, expandable=false){
   const setting=store.settings.effects;
   const effectClass=setting==='off'?'no-motion':setting==='low'?'low-motion':'';
   const frameClass=galleryView?'reward-gallery-art reward-art-frame':'reward-complete-art reward-art-frame';
-  return `<div class="${frameClass} theme-${rewardThemes[index]} ${effectClass}">
+  const art=`<div class="${frameClass} theme-${rewardThemes[index]} ${effectClass}">
     <img src="${imagePath(index)}" alt="${pictureNames[index]}" width="1254" height="1254"${galleryView?' loading="lazy"':''} decoding="async">${rewardEffectMarkup(index)}
   </div>`;
+  if(!expandable) return art;
+  return `<button type="button" class="reward-zoom-btn" data-action="expand-reward" data-index="${index}" aria-label="${pictureNames[index]}を大きく見る">
+    ${art}<span class="reward-zoom-hint">タップで大きく見る</span>
+  </button>`;
+}
+function rewardLightbox() {
+  if(state.expandedRewardIndex===null) return '';
+  const index=state.expandedRewardIndex;
+  return `<div class="reward-modal-backdrop" data-action="close-reward-modal" aria-hidden="true"></div>
+    <div class="reward-modal" role="dialog" aria-modal="true" aria-label="${pictureNames[index]}を大きく表示">
+      <div class="reward-modal-card">
+        <div class="reward-modal-header"><strong>${pictureNames[index]}</strong><button type="button" class="reward-modal-close" data-action="close-reward-modal" aria-label="閉じる">✕</button></div>
+        <div class="reward-modal-body">${rewardArt(index,false,false)}</div>
+      </div>
+    </div>`;
 }
 function puzzle(index,newest=false) {
   const picture=store.reward.pictures[index];
@@ -101,7 +116,7 @@ function rewardPanel(index,newest=false) {
   const p=store.reward.pictures[index];
   return `<section class="panel reward-section"><h2>${p.unlocked===4?pictureNames[index]:`秘密の絵 ${index+1}`}</h2>
     ${p.unlocked===4?`<p class="muted">絵が完成したよ！</p>
-    ${rewardArt(index)}`:
+    ${rewardArt(index,false,true)}`:
     `<p class="muted">満点を取るたびに、1マス開くよ。<ruby>何<rt>なん</rt></ruby>の絵かは、お楽しみ！</p>${puzzle(index,newest)}`}
     <p class="reward-progress">${p.unlocked===4?'完成！ おめでとう！':`${p.unlocked} / 4 マス　あと ${4-p.unlocked} 回で完成！`}</p>
   </section>`;
@@ -110,7 +125,7 @@ function gallery() {
   const r=store.reward;
   return `<section class="panel"><h2>秘密の絵 コレクション</h2><p class="muted">4つの絵があるよ。どんな絵かは、完成するまで秘密！</p>
   <div class="gallery-grid">${r.pictures.map((p,i)=>`<div class="gallery-card ${p.unlocked===4?'complete':''}">
-    ${p.unlocked===4?`${rewardArt(i,true)}<strong>${pictureNames[i]}</strong>`:
+    ${p.unlocked===4?`${rewardArt(i,true,true)}<strong>${pictureNames[i]}</strong>`:
     `<div class="gallery-secret" aria-hidden="true">🎁</div><strong>秘密の絵 ${i+1}</strong>`}
     <small>${p.unlocked===4?'完成！':p.unlocked?`${p.unlocked} / 4 マス`:currentRewardIndex(r)===i?'これから開くよ！':'まだ秘密'}</small>
   </div>`).join('')}</div></section>`;
@@ -173,7 +188,8 @@ function shell(body, narrow=false) {
     <header class="masthead"><span class="brand-mark" aria-hidden="true">★</span><span class="brand">九九マスターチェック</span></header>
     ${state.notice ? `<div class="notice" role="alert">${state.notice}</div>` : ''}
     ${body}<footer>${state.page==='parent'?'頑張った分だけ、できることが増えていくよ。':'頑張った<ruby>分<rt>ぶん</rt></ruby>だけ、できることが増えていくよ。'}<span class="footnote"> 記録はこの端末に保存されます。</span></footer>
-  </div>`;
+  </div>${rewardLightbox()}`;
+  document.body.classList.toggle('reward-modal-open',state.expandedRewardIndex!==null);
   rubyText($app);
 }
 const btn = (action, text, cls='', extra='') => `<button class="btn ${cls}" data-action="${action}" ${extra}>${text}</button>`;
@@ -346,7 +362,7 @@ function render() {
   }
 }
 function navigate(page) {
-  freezeClock();state.page=page;state.feedback=null;state.paused=false;state.answer='';render();
+  freezeClock();state.page=page;state.feedback=null;state.paused=false;state.answer='';state.expandedRewardIndex=null;render();
 }
 function startTest() {
   if (store.active && !confirm('とちゅうのテストをやめて、新しいテストをはじめますか？\n（すでに答えた問題の記録は残ります）')) return;
@@ -416,6 +432,19 @@ function onClick(ev) {
     case 'unpause':state.paused=false;render();break;
     case 'next':state.feedback=null;state.answer='';state.variant=null;if(!store.active){state.page='result';state.variant=pickVariant('good');}render();break;
     case 'child':navigate('child');break;
+    case 'expand-reward':{
+      const index=Number(el.dataset.index);
+      if(!Number.isInteger(index)||index<0||index>=store.reward.pictures.length||store.reward.pictures[index].unlocked!==4)break;
+      state.expandedRewardIndex=index;render();
+      $app.querySelector('.reward-modal-close')?.focus();
+      break;
+    }
+    case 'close-reward-modal':{
+      const index=state.expandedRewardIndex;
+      state.expandedRewardIndex=null;render();
+      $app.querySelector(`[data-action="expand-reward"][data-index="${index}"]`)?.focus();
+      break;
+    }
     case 'reward':navigate('reward');break;
     case 'parent':navigate('parent');break;
     case 'cell':state.selectedCell={a:Number(el.dataset.a),b:Number(el.dataset.b)};render();break;
@@ -458,6 +487,10 @@ $app.addEventListener('change',async ev=>{
   }
 });
 window.addEventListener('keydown',ev=>{
+  if(ev.key==='Escape' && state.expandedRewardIndex!==null){
+    ev.preventDefault();const index=state.expandedRewardIndex;state.expandedRewardIndex=null;render();
+    $app.querySelector(`[data-action="expand-reward"][data-index="${index}"]`)?.focus();return;
+  }
   if(state.page!=='quiz'||!store.active||state.paused||state.feedback||ev.ctrlKey||ev.metaKey||ev.altKey)return;
   if(document.activeElement?.matches('input,select,textarea'))return;
   if(/^[0-9]$/.test(ev.key)){ev.preventDefault();digit(ev.key);}

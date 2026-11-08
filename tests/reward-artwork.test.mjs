@@ -37,7 +37,13 @@ test('only completed rewards have motion overlays and existing tiles stay still'
   assert.match(app,/rewardDecorations\[index\]/);
   assert.match(app,/store\.settings\.effects==='off'\) return ''/);
   assert.match(app,/newest&&idx===last&&store\.settings\.effects!=='off'/);
+  assert.match(app,/data-action=\"expand-reward\"/);
+  assert.match(app,/reward-modal/);
+  assert.match(app,/\$\{rewardLightbox\(\)\}/);
+  assert.match(app,/case 'expand-reward'/);
+  assert.match(app,/case 'close-reward-modal'/);
   assert.match(css,/@media\(prefers-reduced-motion:reduce\)\{\.reward-art-frame \.reward-effect\{display:none!important\}\}/);
   assert.match(css,/\.reward-art-frame\.low-motion \.reward-effect:not\(:nth-of-type\(1\)\)/);
+  assert.doesNotMatch(css,/petal|butterfly|leaf/);
   assert.doesNotMatch(css,/\.reward-complete-art\.low-motion img\{animation:gentle-art/);
 });

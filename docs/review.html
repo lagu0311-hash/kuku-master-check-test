@@ -28,14 +28,14 @@
   </div>
   <div id="groups" class="groups"></div>
   <div class="links"><button id="reset" type="button">開放0マス（初期状態）</button><a class="link" href="./index.html">九九アプリ本体を開く</a></div>
-  <details><summary>検証方法と注意事項</summary><p>まず各作品の1〜4マスを確認してください。4マス完成時だけ完成画像とアニメーションが表示されます。アニメーションを「オフ」にすると動きを抑制します。画面幅、スクロール、画像の欠け、ページ遷移も確認してください。</p><p>本サイトは開発検証専用です。テストデータは実際の学習履歴ではありません。実機確認と公開承認が得られるまで本番v1.3は維持します。</p></details>
+  <details><summary>検証方法と注意事項</summary><p>まず各作品の1〜4マスを確認してください。4マス完成時だけ完成画像とアニメーションが表示されます。完成後は画面下の絵をタップすると大きく表示できます。アニメーションを「オフ」にすると動きを抑制します。画面幅、スクロール、画像の欠け、ページ遷移も確認してください。</p><p>本サイトは開発検証専用です。テストデータは実際の学習履歴ではありません。実機確認と公開承認が得られるまで本番v1.3は維持します。</p></details>
   <p class="foot">GitHub Pagesで公開する場合、この確認ページと原画は一般公開されます。患者・児童などの実データは追加しないでください。</p>
 </main>
 <script type="module">
  import {previewFixtures} from './review-fixtures.js';
  import {validateStore} from './core.js';
  const storageKey='kuku-master-check-preview:v4';
- const series=[['01_flower','花畑の子猫'],['02_starry','星空と子猫'],['03_picnic','ピクニック'],['04_balloon','青い風船の子猫']];
+ const series=[['01_flower','花畑の子猫'],['02_starry','星空と子猫'],['03_picnic','みんなでピクニック'],['04_balloon','青い風船の子猫']];
  const group=document.querySelector('#groups');
  function load(key){
   const raw=previewFixtures[key];
